@@ -2,7 +2,9 @@
 
 namespace App\Exceptions;
 
+use Faker\Provider\Base;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -25,6 +27,16 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+        $this->renderable(function (Throwable $e, $request) {
+            if($e instanceof BaseException) {
+                return $e->render();
+            }
+
+            return response()->json([
+                'error'=> true,
+                'message' => $e->getMessage()
+            ]);
         });
     }
 }
