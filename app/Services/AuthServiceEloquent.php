@@ -83,6 +83,7 @@ class AuthServiceEloquent implements AuthService
 
     public function forgotPassword(ForgotPasswordRequest $request)
     {
+
         $email = $request->post('email');
 
         if (!$this->userRepository->findByField('email', $email)->first()) {
@@ -95,7 +96,7 @@ class AuthServiceEloquent implements AuthService
 
         $link = 'http://127.0.0.1:8000/api/password/reset/?email=' . $passwordReset['email'] . '&token=' . $passwordReset['token'];
 
-        dispatch(new SendEmailForgotPassword([
+        Mail::to($email)->queue(new MyMail([
             'email' => $email,
             'title' => 'Recover Password',
             'body' => $link,
